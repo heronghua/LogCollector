@@ -12,16 +12,20 @@ from LogCollectRunner import LogCollectRunner
 
 class ScreenRecordCollectRunner(LogCollectRunner):
 
+    def __init__(self):
+        super().__init__()
+        self.START_CMD = ["adb","shell","screenrecord","--size","720x1280","--bugreport",output_file]
+        self.STOP_CMD = f"adb shell \"pkill -l INT screenrecord && while [[ $(ps -A -Z|grep -E screenrecord) != '' ]]; do sleep 1; done \"&& adb pull {self.remote_file_path} {self.local_file_path}"
+        self.local_file_path = "out/screen_record.mp4"
+        pass
+
     def start(self,output_file="/sdcard/screenrecord.mp4"):
         self.remote_file_path = output_file
-        self.local_file_path = "out/screen_record.mp4"
-        cmd = ["adb","shell","screenrecord","--size","720x1280",output_file]
-        process = subprocess.Popen(cmd,shell=True)
+        process = subprocess.Popen(self.START_CMD,shell=True)
         return process
 
     def stop(self):
-        stopCmd= f"adb shell \"pkill -l INT screenrecord && while [[ $(ps -A -Z|grep -E screenrecord) != '' ]]; do sleep 1; done \"&& adb pull {self.remote_file_path} {self.local_file_path}"
-        subprocess.run(stopCmd,shell=True)
+        subprocess.run(self.STOP_CMD,shell=True)
         pass
         
 
