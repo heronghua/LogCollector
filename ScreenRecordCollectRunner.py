@@ -6,6 +6,7 @@
 #================================================================
 #!/usr/bin/env python
 
+import os
 import subprocess
 from LogCollectRunner import LogCollectRunner
 
@@ -19,7 +20,8 @@ class ScreenRecordCollectRunner(LogCollectRunner):
         return process
 
     def stop(self):
-        subprocess.run(f"adb shell \"pkill -l INT screenrecord && while [[ $(ps -A -Z|grep -E screenrecord)!='' ]]; do sleep 1; done \"&& echo Hi",shell=True)
+        stopCmd= f"adb shell \"pkill -l INT screenrecord && while [[ $(ps -A -Z|grep -E screenrecord) != '' ]]; do sleep 1; done \"&& adb pull {self.remote_file_path} {self.local_file_path}"
+        subprocess.run(stopCmd,shell=True)
         pass
         
 
@@ -29,6 +31,9 @@ class ScreenRecordCollectRunner(LogCollectRunner):
 # 4. Runner has start stop method
 # 5. manager handle join
 if __name__ == "__main__":
+    if not os.path.exists("out"):
+        os.mkdir("out")
+        pass
     runner = ScreenRecordCollectRunner()
     runner.start()
     input("按回车键停止录制")
