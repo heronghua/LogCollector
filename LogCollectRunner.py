@@ -14,6 +14,11 @@ class LogCollectRunner:
     def start(self):
 
         pass
+        
+    def run_adb_command(self, cmd):
+        """统一执行 adb 命令，减少重复代码"""
+        full_cmd = f"{self.adb_prefix} {cmd}"
+        return subprocess.run(full_cmd, shell=True, capture_output=True, text=True)
 
     def stop(self):
         
