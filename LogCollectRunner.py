@@ -5,6 +5,8 @@
 # Created Time: Mon Mar 10 20:58:12 2025
 #================================================================
 #!/usr/bin/env python
+import subprocess
+
 class LogCollectRunner:
 
     def __init__(self):
