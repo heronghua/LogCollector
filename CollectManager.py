@@ -9,8 +9,11 @@ import os
 from LogType import LogType
 from MainLogCollectRunner import MainLogCollectRunner
 from ScreenRecordCollectRunner import ScreenRecordCollectRunner
+from EventsLogCollectRunner import EventsLogCollectRunner
+from CamMetadataDump import CamMetadataDump
+from SysPropertyCollectRunner import SysPropertyCollectRunner
 
-class LogCollectManager:
+class CollectManager:
 
     def __init__(self):
         self.group = []
@@ -21,9 +24,13 @@ class LogCollectManager:
         if(logs & LogType.LOG_MAIN.value):
             self.group.append(MainLogCollectRunner())
         if(logs & LogType.LOG_EVENTS.value):
-            pass
+            self.group.append(EventsLogCollectRunner())
         if(logs & LogType.SCREEN_RECORD.value):
             self.group.append(ScreenRecordCollectRunner())
+        if(logs & LogType.CAM_DUMP.value):
+            self.group.append(CamMetadataDump())
+        if(logs & LogType.PROPERTIES.value):
+            self.group.append(SysPropertyCollectRunner())
 
         #start all collect
         for runner in self.group:
@@ -41,10 +48,10 @@ class LogCollectManager:
 if __name__ == "__main__":
     if not os.path.exists("out"):
         os.mkdir("out")
-    logCollectManager = LogCollectManager()
-    logCollectManager.startCollect(LogType.LOG_MAIN.value|LogType.LOG_EVENTS.value|LogType.SCREEN_RECORD.value)
+    collectManager = CollectManager()
+    collectManager.startCollect(LogType.LOG_MAIN.value|LogType.LOG_EVENTS.value|LogType.SCREEN_RECORD.value|LogType.CAM_DUMP.value|LogType.PROPERTIES.value)
 
     input("Press Enter to stop:")
 
-    logCollectManager.stopCollect()
+    collectManager.stopCollect()
 

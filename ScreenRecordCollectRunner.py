@@ -9,9 +9,9 @@
 import os
 import subprocess
 import time
-from LogCollectRunner import LogCollectRunner
+from CollectRunner import CollectRunner
 
-class ScreenRecordCollectRunner(LogCollectRunner):
+class ScreenRecordCollectRunner(CollectRunner):
 
     def __init__(self, output_dir="out", output_file_name="screen_record.mp4", device=None):
         super().__init__()
@@ -26,6 +26,7 @@ class ScreenRecordCollectRunner(LogCollectRunner):
 
     def start(self):
         try:
+            #TODO 打开屏幕Touch 点
             subprocess.Popen(self.START_CMD, shell=True)
             print("Screen recording started...")
         except Exception as e:

@@ -12,5 +12,6 @@ class LogType(Enum):
     LOG_EVENTS = 2
     SCREEN_RECORD = 3
     SYS_TRACE = 4
-    M_DUMP = 5
+    CAM_DUMP = 5
+    PROPERTIES = 6
 
