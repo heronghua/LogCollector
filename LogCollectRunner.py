@@ -11,7 +11,7 @@ import subprocess
 
 class LogCollectRunner(CollectRunner):
 
-    def __init__(self, output_dir="out", log_file_name="main.log", device=None):
+    def __init__(self, output_dir="out", log_file_name="log.log", device=None):
         super().__init__()
         self.output_file = os.path.join(output_dir, log_file_name)
         self.output = open(self.output_file,'w')

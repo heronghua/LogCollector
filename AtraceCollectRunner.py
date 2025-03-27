@@ -7,14 +7,23 @@
 #!/usr/bin/env python
 from CollectRunner import CollectRunner
 import os
+import threading
+import subprocess
 
 class AtraceCollectRunner(CollectRunner):
 
-    def __init__(self, output_dir="out", log_file_name="atrace.html", device=None):
+    def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="camera gfx disk"):
         super().__init__(output_dir,log_file_name,device)
-        #TODO impl
-        self.cmd = f"{self.adb_prefix} atrace --async start"
-        #TODO impl
+        self.cmd = f"{self.adb_prefix} shell atrace --async_start {categories}"
+        self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -z -o /data/local/tmp/atrace.output && {self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
+        
+    def start(self):
+        thread = threading.Thread(target=subprocess.run, args=(self.cmd,), kwargs={'shell': True})
+        thread.start()
+    
+    def stop(self):
+        thread = threading.Thread(target=subprocess.run, args=(self.stopCmd,), kwargs={'shell': True})
+        thread.start()
 
 if __name__ == "__main__":
     atraceCollectRunner = AtraceCollectRunner()
