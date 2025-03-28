@@ -12,10 +12,10 @@ import subprocess
 
 class AtraceCollectRunner(CollectRunner):
 
-    def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="camera gfx disk"):
+    def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera gfx disk"):
         super().__init__(output_dir,log_file_name,device)
-        self.cmd = f"{self.adb_prefix} shell atrace --async_start {categories}"
-        self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -z -o /data/local/tmp/atrace.output && {self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
+        self.cmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
+        self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -o /data/local/tmp/atrace.output && {self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
         
     def start(self):
         thread = threading.Thread(target=subprocess.run, args=(self.cmd,), kwargs={'shell': True})
