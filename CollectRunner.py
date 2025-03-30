@@ -6,25 +6,47 @@
 #================================================================
 #!/usr/bin/env python
 import subprocess
+import threading
 
 class CollectRunner:
 
     def __init__(self,output_dir="out",log_file_name="default",device=None):
-        self.device = device  # 添加设备参数
+        self.device = device  # device id 
         self.adb_prefix = f"adb -s {device}" if device else "adb"
-        pass
+        self.startCmd = None
+        self.stopCmd = None
+        self.startThread = None
+        self.stopThread = None
+        self.startProcess = None
+        self.stopProcess = None
 
-    def start(self):
+    # real impl of start
+    def runStartCmd(self):
+        return subprocess.Popen(self.startCmd,shell=True)
 
-        pass
-        
-    def run_adb_command(self, cmd):
-        """统一执行 adb 命令，减少重复代码"""
+    # real impl of stop
+    def runStopCmd(self):
+        subprocess.run(self.stopCmd,shell=True)
+
+    def runAdbCommand(self,cmd):
         full_cmd = f"{self.adb_prefix} {cmd}"
         return subprocess.run(full_cmd, shell=True, capture_output=True, text=True)
 
-    def stop(self):
-        
-        pass
+    # set up a thread to run a subprocess
+    def start(self):
+        if self.startCmd is not None:
+            self.startThread = threading.Thread(target=self.runStartCmd)
+            self.startThread.setName("StartThread")
+            self.startThread.start()
 
-        
+    # set up a thread to run a subprocess
+    def stop(self):
+        if self.startProcess is not None:
+            self.startProcess.terminate()
+            self.startProcess.wait()
+            pass
+
+        if self.stopCmd is not None:
+            self.stopThread = threading.Thread(target=self.runStopCmd)
+            self.stopThread.setName("StopThread")
+            self.stopThread.start()

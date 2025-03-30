@@ -14,16 +14,8 @@ class AtraceCollectRunner(CollectRunner):
 
     def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera gfx disk"):
         super().__init__(output_dir,log_file_name,device)
-        self.cmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
+        self.startCmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
         self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -o /data/local/tmp/atrace.output && {self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
-        
-    def start(self):
-        thread = threading.Thread(target=subprocess.run, args=(self.cmd,), kwargs={'shell': True})
-        thread.start()
-    
-    def stop(self):
-        thread = threading.Thread(target=subprocess.run, args=(self.stopCmd,), kwargs={'shell': True})
-        thread.start()
 
 if __name__ == "__main__":
     atraceCollectRunner = AtraceCollectRunner()

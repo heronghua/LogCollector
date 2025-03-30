@@ -13,23 +13,9 @@ class LogCollectRunner(CollectRunner):
 
     def __init__(self, output_dir="out", log_file_name="log.log", device=None):
         super().__init__()
-        self.output_file = os.path.join(output_dir, log_file_name)
-        self.output = open(self.output_file,'w')
-        self.cmd = f"{self.adb_prefix} logcat -b main"
-        
+        output_file = os.path.join(output_dir, log_file_name)
+        self.output = open(output_file,'w')
 
+    def runStartCmd(self):
+        self.startProcess = subprocess.Popen(self.startCmd,shell=True,stdout=self.output,stderr=subprocess.PIPE)
 
-    def start(self):
-        self.process = subprocess.Popen(self.cmd,shell=True,stdout=self.output,stderr=subprocess.PIPE)
-        
-    def stop(self):
-        self.process.terminate()
-        self.output.close()
-        
-        
-
-if __name__ == "__main__":
-    logCollector = LogCollectRunner()
-    logCollector.start()
-    input("Press any key to continue:")
-    logCollector.stop()
