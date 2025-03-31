@@ -17,6 +17,8 @@ class AtraceCollectRunner(CollectRunner):
         self.startCmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
         self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -o /data/local/tmp/atrace.output && {self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
 
+    def runStartCmd(self):                                     return subprocess.run(self.startCmd,shell=Tru    e) 
+
 if __name__ == "__main__":
     atraceCollectRunner = AtraceCollectRunner()
     atraceCollectRunner.start()
