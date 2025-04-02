@@ -15,7 +15,6 @@ class ScreenRecordCollectRunner(CollectRunner):
 
     def __init__(self, output_dir="out", output_file_name="screen_record.mp4", device=None):
         super().__init__()
-
         self.output_file = os.path.join(output_dir, output_file_name)
         remote_output_file = f"/sdcard/{output_file_name}"
         self.startCmd = f"{self.adb_prefix} shell screenrecord --size 720x1280 --bugreport {remote_output_file}"
@@ -37,7 +36,7 @@ class ScreenRecordCollectRunner(CollectRunner):
             self.runAdbCommand("shell sync")
             self.runAdbCommand(self.stopCmd)
 
-            print("Screen recording stopped and saved to {self.output_file}")
+            print(f"Screen recording stopped and saved to {self.output_file}")
         except Exception as e:
             print(f"Error stopping screen recording: {e}")
 
