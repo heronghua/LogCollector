@@ -16,13 +16,14 @@ class AtraceCollectRunner(CollectRunner):
         super().__init__(output_dir,log_file_name,device)
         self.startCmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
         self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -o /data/local/tmp/atrace.output"
-        self.pullCmd = "{self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
+        self.pullCmd = f"{self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
 
-    def runStartCmd(self):                                     return subprocess.run(self.startCmd,shell=Tru    e) 
+    def runStartCmd(self):
+        return subprocess.run(self.startCmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
     def runStopCmd(self):
-        subprocess.run(self.stopCmd,check=True)
-        subprocess.run(self.pullCmd,check=True)
+        subprocess.run(self.stopCmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        subprocess.run(self.pullCmd,shell=True)
 
     def stop(self):
         if self.stopCmd is not None:
