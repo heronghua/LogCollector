@@ -12,11 +12,19 @@ import subprocess
 
 class AtraceCollectRunner(CollectRunner):
 
-    def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera gfx disk"):
+    def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera"):
         super().__init__(output_dir,log_file_name,device)
+        self.fileNameGenCmd = f"{self.adb_prefix} shell 'product=$(getprop ro.build.product);\
+                record_time=$(date \"+%Y%m%d%H%M%S\"); \
+                echo ${{product}}_${{record_time}}'"
+        log_file_name = self.generateAtraceFileName()
         self.startCmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
-        self.stopCmd = f"{self.adb_prefix} shell atrace --async_stop -o /data/local/tmp/atrace.output"
-        self.pullCmd = f"{self.adb_prefix} pull /data/local/tmp/atrace.output {output_dir}/{log_file_name}"
+        self.stopCmd  = f"{self.adb_prefix} shell atrace --async_stop  -o /data/local/tmp/{log_file_name}"
+        self.pullCmd  = f"{self.adb_prefix} pull /data/local/tmp/{log_file_name} {output_dir}/{log_file_name}"
+
+    def generateAtraceFileName(self):
+        result=subprocess.run(self.fileNameGenCmd, shell=True,capture_output=True,text=True,check=True)
+        return result.stdout.strip()
 
     def runStartCmd(self):
         return subprocess.run(self.startCmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
