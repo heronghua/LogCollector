@@ -14,9 +14,11 @@ class AtraceCollectRunner(CollectRunner):
 
     def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera"):
         super().__init__(output_dir,log_file_name,device)
-        self.fileNameGenCmd = f"{self.adb_prefix} shell 'product=$(getprop ro.build.product);\
-                record_time=$(date \"+%Y%m%d%H%M%S\"); \
-                echo ${{product}}_${{record_time}}'"
+        self.fileNameGenCmd = f"{self.adb_prefix} shell 'record_time=$(date \"+%Y%m%d%H%M%S\"); \
+                model=$(getprop ro.build.model); \
+                build_id=$(getprop ro.build.id); \
+                build_version=$(getprop ro.build.version.release); \
+                echo trace-${{model}}-${{build_id}}.${{build_version}}_${{record_time}}'"
         log_file_name = self.generateAtraceFileName()
         self.startCmd = f"{self.adb_prefix} shell atrace --async_start -c -b 16384 {categories}"
         self.stopCmd  = f"{self.adb_prefix} shell atrace --async_stop  -o /data/local/tmp/{log_file_name}"
