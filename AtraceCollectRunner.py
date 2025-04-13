@@ -15,7 +15,7 @@ class AtraceCollectRunner(CollectRunner):
     def __init__(self, output_dir="out", log_file_name="atrace", device=None,categories="gfx view sched binder_driver binder_lock camera"):
         super().__init__(output_dir,log_file_name,device)
         self.fileNameGenCmd = f"{self.adb_prefix} shell 'record_time=$(date \"+%Y%m%d%H%M%S\"); \
-                model=$(getprop ro.build.model); \
+                model=$(getprop ro.product.model); \
                 build_id=$(getprop ro.build.id); \
                 build_version=$(getprop ro.build.version.release); \
                 echo trace-${{model}}-${{build_id}}.${{build_version}}_${{record_time}}'"
@@ -26,7 +26,7 @@ class AtraceCollectRunner(CollectRunner):
 
     def generateAtraceFileName(self):
         result=subprocess.run(self.fileNameGenCmd, shell=True,capture_output=True,text=True,check=True)
-        return result.stdout.strip()
+        return result.stdout.strip().replace(" ","_")
 
     def runStartCmd(self):
         return subprocess.run(self.startCmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
