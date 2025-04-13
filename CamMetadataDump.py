@@ -15,9 +15,8 @@ class CamMetadataDump(LogCollectRunner):
         super().__init__(output_dir,log_file_name,device)
         self.stopCmd = f"{self.adb_prefix} shell dumpsys media.camera"
 
-    def runStopCmd(self):
-        self.stopProcess = subprocess.run(self.stopCmd,shell=True,stdout=self.output,stderr=subprocess.PIPE)
-        self.output.close()
+    def stop(self):
+        super().stop(self.output)
         
 if __name__ == "__main__":
     camMetadataDump = CamMetadataDump()

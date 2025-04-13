@@ -16,6 +16,6 @@ class LogCollectRunner(CollectRunner):
         output_file = os.path.join(output_dir, log_file_name)
         self.output = open(output_file,'w')
 
-    def runStartCmd(self):
-        self.startProcess = subprocess.Popen(self.startCmd,shell=True,stdout=self.output,stderr=subprocess.PIPE)
-
+    def start(self):
+        if self.startCmd is not None:
+            subprocess.Popen(self.startCmd,shell=True,stdout=self.output,stderr=subprocess.PIPE)

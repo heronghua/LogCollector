@@ -6,6 +6,7 @@
 #================================================================
 #!/usr/bin/env python
 import os
+import concurrent.futures
 from LogType import LogType
 from MainLogCollectRunner import MainLogCollectRunner
 from ScreenRecordCollectRunner import ScreenRecordCollectRunner
@@ -35,15 +36,14 @@ class CollectManager:
             self.group.append(AtraceCollectRunner())
 
         #start all collect
-        for runner in self.group:
-            runner.start()
-        pass
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(runner.start) for runner in self.group]
+            concurrent.futures.wait(futures)
 
     def stopCollect(self):
-        for runner in self.group:
-            runner.stop()
-        pass
-
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(runner.stop) for runner in self.group]
+            concurrent.futures.wait(futures)
 
 if __name__ == "__main__":
     if not os.path.exists("out"):

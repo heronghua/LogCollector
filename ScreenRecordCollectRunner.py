@@ -18,27 +18,7 @@ class ScreenRecordCollectRunner(CollectRunner):
         self.output_file = os.path.join(output_dir, output_file_name)
         remote_output_file = f"/sdcard/{output_file_name}"
         self.startCmd = f"{self.adb_prefix} shell screenrecord --size 720x1280 --bugreport {remote_output_file}"
-        self.stopCmd = f"pull {remote_output_file} {self.output_file}"
-
-    def runStopCmd(self):
-        try:
-            # send abort signal
-            self.runAdbCommand("shell pkill -l INT screenrecord")
-
-            # poll to wait screenrecord process quit
-            for _ in range(10):  # wait time limit 10 seconds
-                result = self.runAdbCommand("shell pidof screenrecord")
-                if not result.stdout.strip():  # process is already quit
-                    break
-                time.sleep(1)
-
-            # sync to ensure data full
-            self.runAdbCommand("shell sync")
-            self.runAdbCommand(self.stopCmd)
-
-            print(f"Screen recording stopped and saved to {self.output_file}")
-        except Exception as e:
-            print(f"Error stopping screen recording: {e}")
+        self.stopCmd = f"{self.adb_prefix} shell pkill -l INT screenrecord && {self.adb_prefix} shell sync && {self.adb_prefix} pull {remote_output_file} {self.output_file}"
 
 if __name__ == "__main__":
     output_dir = "out"

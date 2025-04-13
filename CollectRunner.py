@@ -15,38 +15,26 @@ class CollectRunner:
         self.adb_prefix = f"adb -s {device}" if device else "adb"
         self.startCmd = None
         self.stopCmd = None
-        self.startThread = None
-        self.stopThread = None
         self.startProcess = None
         self.stopProcess = None
-
-    # real impl of start
-    def runStartCmd(self):
-        return subprocess.Popen(self.startCmd,shell=True)
-
-    # real impl of stop
-    def runStopCmd(self):
-        subprocess.run(self.stopCmd,shell=True)
 
     def runAdbCommand(self,cmd):
         full_cmd = f"{self.adb_prefix} {cmd}"
         return subprocess.run(full_cmd, shell=True, capture_output=True, text=True)
 
-    # set up a thread to run a subprocess
     def start(self):
         if self.startCmd is not None:
-            self.startThread = threading.Thread(target=self.runStartCmd)
-            self.startThread.setName("StartThread")
-            self.startThread.start()
+            subprocess.Popen(self.startCmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
-    # set up a thread to run a subprocess
-    def stop(self):
+    def stop(self,out_put=None):
         if self.startProcess is not None:
             self.startProcess.terminate()
             self.startProcess.wait()
-            pass
 
         if self.stopCmd is not None:
-            self.stopThread = threading.Thread(target=self.runStopCmd)
-            self.stopThread.setName("StopThread")
-            self.stopThread.start()
+            if out_put is not None:
+                output=out_put
+            else:
+                output=subprocess.PIPE
+            self.stopProcess=subprocess.Popen(self.stopCmd,shell=True,stdout=output,stderr=subprocess.PIPE)
+            self.stopProcess.wait()

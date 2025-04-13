@@ -12,7 +12,7 @@ class EventsLogCollectRunner(LogCollectRunner):
 
     def __init__(self, output_dir="out", log_file_name="events.log", device=None):
         super().__init__(output_dir,log_file_name,device)
-        self.cmd = f"{self.adb_prefix} logcat -b events"
+        self.startCmd = f"{self.adb_prefix} logcat -b events"
 
 if __name__ == "__main__":
     eventsLogCollector = EventsLogCollectRunner()
