@@ -20,10 +20,10 @@ class AtraceCollectRunner(CollectRunner):
         self.pullCmd  = f"{self.adb_prefix} pull /data/local/tmp/{log_file_name} {output_dir}/{log_file_name}"
 
     def generateAtraceFileName(self):
-        model = subprocess.run([f'{adb_prefix}','shell','getprop','ro.product.model'],stdout=subprocess.PIPE,text=True).stdout.strip()
-        build_id = subprocess.run([f'{adb_prefix}','shell','getprop','ro.build.id'],stdout=subprocess.PIPE,text=True).stdout.strip()
-        build_version = subprocess.run([f'{adb_prefix}','shell','getprop','ro.build.version.release'],stdout=subprocess.PIPE,text=True).stdout.strip()
-        record_time = subprocess.run([f'{adb_prefix}','shell','date','+%Y%m%d%H%M%S'],stdout=subprocess.PIPE,text=True).stdout.strip()
+        model = subprocess.run([f'{self.adb_prefix}','shell','getprop','ro.product.model'],stdout=subprocess.PIPE,text=True).stdout.strip()
+        build_id = subprocess.run([f'{self.adb_prefix}','shell','getprop','ro.build.id'],stdout=subprocess.PIPE,text=True).stdout.strip()
+        build_version = subprocess.run([f'{self.adb_prefix}','shell','getprop','ro.build.version.release'],stdout=subprocess.PIPE,text=True).stdout.strip()
+        record_time = subprocess.run([f'{self.adb_prefix}','shell','date','+%Y%m%d%H%M%S'],stdout=subprocess.PIPE,text=True).stdout.strip()
         return f"trace-{model}-{build_id}-{build_version}-{record_time}"
 
     def runStartCmd(self):
